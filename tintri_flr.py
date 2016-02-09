@@ -24,7 +24,7 @@ dbg_path = "/root/.tintri"
 # uws: 2016.02.08
 # File Level Recovery Support for Tintri FLR Snapshot Feature
 #
-import getopt, os, sys, pickle
+import getopt, os, sys, pickle, pprint
 from os.path import join, basename, islink
 from subprocess import Popen, PIPE
 from time import strftime
@@ -35,7 +35,7 @@ DISK_BY_PATH = "/dev/disk/by-path"
 SCSI_SEARCH_PATH = "/sys/class/scsi_host"
 MOUNT = "/bin/mount"
 UMOUNT = "/bin/umount"
-FDISK = "/sbin/fdisk -l"
+FDISK = "LANG=C /sbin/fdisk -l"
 
 first_fdisk_file = join(dbg_path, 'first_fdisk_info.pickle')
 
@@ -147,7 +147,8 @@ def search_for_new_disks():
     for d in os.listdir(SCSI_SEARCH_PATH):
         scan_file = join(SCSI_SEARCH_PATH, d, "scan")
         cmd = "echo \"- - -\" >%s" % scan_file
-        print "search_for_new_disks: cmd : %s" % cmd
+        if verbose > 0:
+            print "search_for_new_disks: cmd : %s" % cmd
         os.system(cmd)
 
 def init_env():
@@ -183,9 +184,8 @@ def init_env():
         first_fdisk = pic.load()
         mnt_info = pic.load()
         fd.close()
-        dbg_fd.write("""OLD fdisk info:
-    %s 
-    \n""" % first_fdisk)
+        dbg_fd.write("OLD fdisk info:\n")
+        pprint.pprint(first_fdisk, stream=dbg_fd, indent=4)
 
     return first_fdisk, mnt_info
 
@@ -200,14 +200,26 @@ def write_first_fdisk(first_fdisk, mnt_info):
     pic.dump(mnt_info)
     fd.close()
 
+def count_disk(disks):
+    """
+        Count disks with partition table; Return Nr of disks
+    """
+    nr = 0
+    for disk in disks:
+        if disks[disk]['partitions']:
+            nr += 1
+    return nr
 
 def mount_snap_disks(first_disk, new_disk, mnt_info):
     """
         Mount the new found partitions on "recover" paths
     """
-    global TINTRI_RECOVER_DIR
+    global TINTRI_RECOVER_DIR, dbg_fd
     # Plausi
-    if not len(first_disk.keys()) == len(new_disk.keys()):
+    # it could happen that there are disks without a partition-table
+    # these disks will not be copied by tintri, therefore we shouldn't
+    # count them
+    if not count_disk(first_disk) == count_disk(new_disk):
         print """ERROR: Number of disks before snapshot Recover is not equal the
     number of the newly found disks:
         Nr Pre disks    : %s 
@@ -237,6 +249,7 @@ def mount_snap_disks(first_disk, new_disk, mnt_info):
                                                         basename(mnt_name))
                             cmd = "%s /dev/%s %s" % (MOUNT, npart['name'],
                                                                        mnt_dir)
+                            dbg_fd.write("%s\n" % cmd)
                             if verbose:
                                 print cmd
                             if not os.path.isdir(mnt_dir):
