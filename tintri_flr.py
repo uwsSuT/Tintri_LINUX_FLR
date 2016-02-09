@@ -14,7 +14,7 @@
 #===============================================================================
 
 TINTRI_RECOVER_DIR = "/tintri_recover"
-dbg_path = "/root/.tintri"
+DBG_PATH = "/root/.tintri"
 
 #===============================================================================
 # END OF user changeable Part
@@ -37,7 +37,7 @@ MOUNT = "/bin/mount"
 UMOUNT = "/bin/umount"
 FDISK = "LANG=C /sbin/fdisk -l"
 
-first_fdisk_file = join(dbg_path, 'first_fdisk_info.pickle')
+first_fdisk_file = join(DBG_PATH, 'first_fdisk_info.pickle')
 
 verbose = 0
 dbg_fd = None
@@ -163,10 +163,10 @@ def init_env():
         print "ERROR: this script is only usable on a LINUX system"
         sys.exit(99)
 
-    if not os.path.isdir(dbg_path):
-        os.makedirs(dbg_path)
+    if not os.path.isdir(DBG_PATH):
+        os.makedirs(DBG_PATH)
 
-    dbg_file = join(dbg_path, 'flr.dbg')
+    dbg_file = join(DBG_PATH, 'flr.dbg')
     dbg_fd = open(dbg_file, 'w')
     dbg_fd.write("""
 ================================================================================

@@ -52,17 +52,17 @@ Volumemanager partitions couldn't be mounted from a tintri snapshot!
 ================================================================================
 The filesystem information is stored in a information directory in the
 home directory of the "root" user. This can be changed on top of the script
-in the setting of the variable "dbg_path".
+in the setting of the variable __DBG_PATH__.
 
-The mount-points are generated in a directory named "/tintri_recover".
-This can also be changed in the top area of the script.
+The mount-points are generated in a directory named **/tintri_recover**.
+This can also be changed by editing the vraiable __TINTRI_RECOVER_DIR__ in the top area of the script.
 
     #===========================================================================
     # Changeable Part
     #===========================================================================
 
     TINTRI_RECOVER_DIR = "/tintri_recover"
-    dbg_path = "/root/.tintri"
+    DBG_PATH = "/root/.tintri"
 
     #===========================================================================
     # END OF user changeable Part
@@ -79,15 +79,16 @@ option "--reset".
 ================================================================================
 ##                Resetting all informations
 ================================================================================
-the script stores the information it had found a the first call in the
-"dbg_path" (/root/.tintri). Normally it will work with the primary found
-disk informations in furthermore calls. In normal cases this is very helpfull.
+The script stores the found disk-information of the first call in the
+"DBG_PATH" (/root/.tintri). All later on call will use these primarly found
+disk-informations. In normal cases this is very helpfull, because the script
+knows which are the original partitions.
 But sometimes (i.e. if the virtual machine has got a new real disk) you want
-to start from scratch. If you need this you should call the "--reset_all"
+to start from scratch. In this rare situation you should call the "--reset_all"
 option.
 
 ================================================================================
-##                Examples
+##                Example
 ================================================================================
 __Given__: a Ubuntu LINUX system with 3 Partitions "__/__", "__/tmp__" and "__/home__"
 A Snapshot is restored with the Tintri WWW-GUI.
@@ -96,7 +97,7 @@ A Snapshot is restored with the Tintri WWW-GUI.
 
 ![mount VMrecover/file 02](/images/FLR_02.png)
 
-After completed restore you can start the "tintri_flr.py" and the
+After completed restore you can start the *__tintri_flr.py__* and the
 Snapshot-partitions will be mounted in the __TINTRI_RECOVER_DIR__.
 
     # ./tintri_flr.py -v
@@ -111,8 +112,8 @@ Snapshot-partitions will be mounted in the __TINTRI_RECOVER_DIR__.
 ================================================================================
 ##                Debugging
 ================================================================================
-The script generates a debug file called __flr.dbg__ in the __dbg_path__
-(*/root/.tintri*)  Here you can find all information about the primary disks
+The script generates a debug file called __flr.dbg__ in the __DBG_PATH__
+(Default: */root/.tintri*)  Here you can find all information about the primary disks
 and the hopefully mounted snapshot disks. This file will be overwritten at
 each run.
 
