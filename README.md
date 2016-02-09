@@ -3,10 +3,15 @@ automatic mounting of Tintri-Storage-Snapshots for LINUX File-Level-Recovery (FL
 
 ================================================================================
                 README: for the Python script tintri_flr.py
-                uws: 2016.02.08
+                Version: 1.0.1
+                Copyright (c) 2016  -  The MIT License (MIT)
+                      Uwe W. Schäfer 
+                      Schäfer & Tobies Software u. Consulting GmbH
+                      www.schaefer-tobies.de
+                uws: 2016.02.09
 ================================================================================
 
-This python script "tintri_flr.py" intends to mount the prepared
+This python script __tintri_flr.py__ intends to mount the prepared
 "restore-snapshot" from a
 Tintri-Storage on the actual LINUX-System.
 
